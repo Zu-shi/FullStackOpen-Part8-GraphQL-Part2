@@ -20,8 +20,13 @@ const Authors = (props) => {
     return null
   }
 
+  let authorsToSelect = []
   if (authors.loading) {
     return <div>loading...</div>
+  } else {
+    authorsToSelect = authors.data.allAuthors.map((a) => {
+      return <option value={a.name} key={a.name}>{a.name}</option>
+    })
   }
 
   const onSubmitEditAuthor = async (e) => {
@@ -30,6 +35,25 @@ const Authors = (props) => {
     editAuthor({ variables: { name: name, setBornTo: parseInt(born) } })
     //setName('')
     //setBorn('')
+  }
+
+  const handleSelectChange = (e) => {
+    setName(e.target.value)
+  }
+
+  const AuthorSelect = () => {
+    if (authors.loading) {
+      return <div>loading...</div>
+    }
+
+    return (
+      <div>
+        <label name="Author">Choose author:</label>
+        <select name="Author" id="Author" onChange={handleSelectChange}>
+          {authorsToSelect}
+        </select>
+      </div>
+    )
   }
 
   console.log("authors", authors)
@@ -53,7 +77,8 @@ const Authors = (props) => {
         </tbody>
       </table>
       <form onSubmit={onSubmitEditAuthor}>
-        <div>name:<input value={name} onChange={(e) => setName(e.target.value)} /></div>
+        {/* <div>name:<input value={name} onChange={(e) => setName(e.target.value)} /></div> */}
+        <AuthorSelect />
         <div>born:<input value={born} onChange={(e) => setBorn(e.target.value)} /></div>
         <div><button type="submit">Submit</button></div >
       </form>
