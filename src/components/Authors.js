@@ -5,7 +5,7 @@ import { useState } from "react"
 
 const Authors = (props) => {
   const authors = useQuery(ALL_AUTHORS)
-  const [editAuthor] = useMutation(EDIT_AUTHOR, {
+  const [editAuthor, result] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
     onError: (error) => {
       console.log("error:", error)
@@ -13,6 +13,8 @@ const Authors = (props) => {
       const messages = error.graphQLErrors[0].message
     }
   })
+
+
   const [name, setName] = useState('')
   const [born, setBorn] = useState('')
 
@@ -24,7 +26,7 @@ const Authors = (props) => {
   if (authors.loading) {
     return <div>loading...</div>
   } else {
-    console.log(authors)
+    // console.log(authors)
     authorsToSelect = authors.data.allAuthors.map((a) => {
       return <option value={a.name} key={a.name}>{a.name}</option>
     })
@@ -39,6 +41,7 @@ const Authors = (props) => {
   }
 
   const handleSelectChange = (e) => {
+    console.log("handleSelectChange, ", e.target.value)
     setName(e.target.value)
   }
 
@@ -50,7 +53,7 @@ const Authors = (props) => {
     return (
       <div>
         <label name="Author">Choose author:</label>
-        <select name="Author" id="Author" onChange={handleSelectChange}>
+        <select name="Author" id="Author" onChange={handleSelectChange} value={name}>
           {authorsToSelect}
         </select>
       </div>

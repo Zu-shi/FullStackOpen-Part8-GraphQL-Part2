@@ -8,8 +8,14 @@ const NewBook = (props) => {
   const [published, setPublished] = useState('')
   const [genre, setGenre] = useState('')
   const [genres, setGenres] = useState([])
-  const [createBook] = useMutation(ADD_BOOKS,
-    { refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }] }
+  const [createBook, { loading, error }] = useMutation(ADD_BOOKS,
+    {
+      onError: (err) => {
+        console.log("CreateBook err", err)
+        console.log("CreateBook err2", error)
+      },
+      refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }]
+    }
   )
 
   if (!props.show) {
@@ -20,8 +26,16 @@ const NewBook = (props) => {
     event.preventDefault()
 
     console.log('add book...')
-    console.log(createBook)
-    createBook({ variables: { title, published: parseInt(published), author, genres } })
+    // console.log(createBook)
+    try {
+      await createBook({ variables: { title, author, published: parseInt(published), genres } })
+    }
+    catch (error) {
+      // Handle GraphQL errors here
+      console.error('GraphQL Error:', error.message);
+      console.error('GraphQL Error Details:', error.graphQLErrors);
+      console.error('Network Error Details:', error.networkError);
+    }
 
     setTitle('')
     setPublished('')
