@@ -24,6 +24,7 @@ const Authors = (props) => {
   if (authors.loading) {
     return <div>loading...</div>
   } else {
+    console.log(authors)
     authorsToSelect = authors.data.allAuthors.map((a) => {
       return <option value={a.name} key={a.name}>{a.name}</option>
     })
