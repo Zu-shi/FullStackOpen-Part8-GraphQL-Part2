@@ -3,10 +3,10 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
-import { LOGIN } from './queries'
+import { LOGIN, ME } from './queries'
 import { useMutation } from '@apollo/client'
 import { useNavigate } from 'react-router-dom'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useQuery } from '@apollo/client'
 
 const App = () => {
   const [page, setPage] = useState('authors')
@@ -21,7 +21,7 @@ const App = () => {
     }
   })
 
-  //setToken(window.localStorage.getItem("token"))
+  useEffect(() => setToken(window.localStorage.getItem("token")), [])
 
   useEffect(() => {
     if (result.data) {
@@ -80,22 +80,52 @@ const App = () => {
 
   }
 
+  const Recs = (props) => {
+    const user = useQuery(ME, {
+      onError: (error) => {
+        console.log(error)
+      }
+    })
+
+    // useEffect(
+    //   ,
+    // [token])
+
+    console.log(user)
+
+    if (user.loading) {
+      return <>User is loading</>
+    }
+
+    console.log("rendering books")
+    return (
+      <Books recs={user.data.me.favoriteGenre} token={token} show={props.show} />
+    )
+  }
+
   return (
     <div>
       <div>
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
-        {token ? <button onClick={logout}>logout</button> :
+        {token ?
+          <>
+            <button onClick={logout}>logout</button>
+            <button onClick={() => setPage('recs')}>recommendations</button>
+          </>
+          :
           <button onClick={() => setPage('login')}>login</button>
         }
       </div>
 
       <Authors show={page === 'authors'} />
 
-      <Books show={page === 'books'} />
+      <Books show={page === 'books'} token={token} />
 
       <NewBook show={page === 'add'} />
+
+      <Recs show={page === 'recs'} />
 
       <Login show={page === 'login'} />
     </div>

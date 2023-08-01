@@ -25,11 +25,14 @@ const Books = (props) => {
       // What happens if new genre is added? Need to map it w/ previous genres to figure it out.
       genresTempArr.sort()
 
+      console.log("test")
+      console.log(props.recs)
+      console.log(genresTempArr)
       setGenres(genresTempArr.map((g, index) => {
-        return { index, name: g, selected: false } // to update logic to keep in place on new
+        return { index, name: g, selected: g === props.recs ? true : false } // to update logic to keep in place on new
       }))
     }
-  }, [books])
+  }, [books, props.token])
 
   // The problem is that when books update, genres need to update, but updating genres causes a redraw
   // The useState is being used for two different things here:
@@ -65,18 +68,19 @@ const Books = (props) => {
   }
 
   const genreSelector =
-    genres.map((g) => {
-      return (
-        <label><input
-          type="checkbox"
-          name={g.name}
-          id={g.name}
-          key={g.name}
-          checked={g.selected}
-          onChange={handleChange}
-        />{g.name}</label>
-      )
-    })
+    props.recs ? <></> :
+      genres.map((g) => {
+        return (
+          <label><input
+            type="checkbox"
+            name={g.name}
+            id={g.name}
+            key={g.name}
+            checked={g.selected}
+            onChange={handleChange}
+          />{g.name}</label>
+        )
+      })
 
   console.log("genreSelector", genreSelector)
   console.log("books", books)
